@@ -13,8 +13,8 @@ namespace TestApp
         /// <param name="args"></param>
         static void Main(string[] args)
         {
-            // generate a random array length 100, all elements value are 0 to 100
-            var array = GenerateAndPrintRandomArray(new Random(), 50);
+            // generate a random array length 100, all elements value are 0 to 100,
+            var array = GenerateAndPrintRandomArray(new Random(), 100, 0, 100);
 
             // assume given number is 100
             var number = 100;
@@ -51,6 +51,13 @@ namespace TestApp
                 return (first, second, third);
             }
 
+            // check the if given number is out of bounds
+            if (!CheckGivenNumberBounds(array, number))
+            {
+                Console.WriteLine($"The given number {number} is out of bounds.");
+                return (first, second, third);
+            }
+
             for (int i = 0; i < array.Length; i++)
             {
                 // divide number into two parts: current element and the remain part would be the sum of the left two elements.
@@ -60,13 +67,51 @@ namespace TestApp
 
                 if (subFirst != -1 && subSecond != -1)
                 {
-                    first = i;
-                    second = subFirst;
-                    third = subSecond;
+                    // reorder indexes
+                    (first, second, third) = Reorder((subFirst, subSecond, i));
                     break;
                 }
             }
             return (first, second, third);
+        }
+
+        /// <summary>
+        /// Reorder the output indexes
+        /// </summary>
+        /// <param name="indexes">The indexes</param>
+        /// <returns></returns>
+        static (int, int, int) Reorder((int, int, int) indexes)
+        {
+            // subFirst always < subSecond
+            // given index < subFirst -> given index, subFirst, subSecond
+            // given index > subSecond -> subFirst, subSecond, given index
+            // Otherwise subFirst -> given index -> subSecond
+            // Or use linq -> new List<int> { indexes.Item1, indexes.Item2, indexes.Item3 }.OrderBy(i => i).ToArray();
+            if (indexes.Item3 < indexes.Item1)
+            {
+                return (indexes.Item3, indexes.Item1, indexes.Item2);
+            }
+            else if (indexes.Item3 < indexes.Item2)
+            {
+                return (indexes.Item1, indexes.Item2, indexes.Item3);
+            }
+            else
+            {
+                return (indexes.Item1, indexes.Item3, indexes.Item2);
+            }
+        }
+
+        /// <summary>
+        /// Check if the given number out of bounds
+        /// The given number must be greater than the sum of min three numbers and less than sum of max three numbers
+        /// </summary>
+        /// <param name="array">The input array</param>
+        /// <param name="number">The given number</param>
+        /// <returns>Return true if validated, otherwise false</returns>
+        static bool CheckGivenNumberBounds(int[] array, int number)
+        {
+            var ordered = array.OrderBy(e => e);
+            return ordered.Take(3).Sum() <= number && ordered.TakeLast(3).Sum() >= number;
         }
 
         /// <summary>
@@ -99,6 +144,7 @@ namespace TestApp
                 else
                 {
                     var foundedIndex = map[sub];
+
                     // same with the given index, continue to search next one
                     if (i == index || foundedIndex == index)
                     {
@@ -119,10 +165,10 @@ namespace TestApp
         /// <param name="random"></param>
         /// <param name="length">array length</param>
         /// <returns></returns>
-        static int[] GenerateAndPrintRandomArray(Random random, int length)
+        static int[] GenerateAndPrintRandomArray(Random random, int length, int minValue = 0, int maxValue = 100)
             => Enumerable.Range(0, length).Select(i =>
             {
-                var element = random.Next(0, 100);
+                var element = random.Next(minValue, maxValue);
                 // print element
                 Console.WriteLine($"array[{i}]={element}");
                 return element;
