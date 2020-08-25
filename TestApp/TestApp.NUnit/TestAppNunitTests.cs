@@ -5,7 +5,7 @@ using System.Text;
 
 namespace TestApp.NUnit
 {
-    [TestFixture(Category = nameof(TestAppBase))]
+    [TestFixture(Category = nameof(TestAppNunitTests))]
     public class TestAppNunitTests : TestAppBase
     {
         /// <summary>
