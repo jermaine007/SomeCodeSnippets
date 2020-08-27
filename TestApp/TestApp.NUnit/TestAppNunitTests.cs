@@ -1,8 +1,10 @@
 ﻿using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Threading;
 
 namespace TestApp.NUnit
 {
@@ -31,22 +33,24 @@ namespace TestApp.NUnit
         [Test]
         public void TestRandomTestCases()
         {
-            int arrayNumber = Searcher.Random.Next(100000, 1000000);
+            int arrayNumber = Searcher.Random.Next(10000, 100000);
+            TestContext.WriteLine($"Begin to test {arrayNumber} random test cases");
             while (arrayNumber > 0)
             {
                 DoRandomTest();
                 arrayNumber--;
             }
+            TestContext.WriteLine($"End to test {arrayNumber} random test cases");
         }
 
         private void DoRandomTest()
         {
 
-            var length = Searcher.Random.Next(4, 10000);
+            var length = Searcher.Random.Next(4, 1000);
             var number = Searcher.Random.Next();
             var array = Searcher.GenerateRandomArray(length, int.MinValue / 3, int.MaxValue / 3);
-            var (actualFirst, actualSecond, actualThird) = Searcher.ThreeSearch(array, number, msg => TestContext.WriteLine(msg));
-            TestContext.WriteLine($"Run test array length: {length}, number: {number}");
+            var (actualFirst, actualSecond, actualThird) = Searcher.ThreeSearch(array, number);
+
 
             if ((actualFirst, actualSecond, actualThird) != NO_RESULT)
             {
@@ -55,7 +59,7 @@ namespace TestApp.NUnit
             else
             {
                 // search again
-                (actualFirst, actualSecond, actualThird) = Searcher.AnotherSearchThree(array, number, msg => TestContext.WriteLine(msg));
+                (actualFirst, actualSecond, actualThird) = Searcher.AnotherSearchThree(array, number);
                 Assert.AreEqual(NO_RESULT, (actualFirst, actualSecond, actualThird));
             }
 
