@@ -18,7 +18,7 @@ namespace TestApp
         /// <param name="array">Source array</param>
         /// <param name="number">The given number</param>
         /// <returns></returns>
-        public (int, int, int) ThreeSearch(int[] array, int number)
+        public (int, int, int) ThreeSearch(int[] array, int number, Action<string> output = null)
         {
             var (first, second, third) = (-1, -1, -1);
 
@@ -31,7 +31,7 @@ namespace TestApp
             // check the if given number is out of bounds
             if (!CheckGivenNumberBounds(array, number))
             {
-                Console.WriteLine($"The given number {number} is out of bounds.");
+                output?.Invoke($"The given number {number} is out of bounds.");
                 return (first, second, third);
             }
 
@@ -46,6 +46,7 @@ namespace TestApp
                 {
                     // reorder indexes
                     (first, second, third) = Reorder((subFirst, subSecond, i));
+                    output?.Invoke($"Found {(first, second, third) }");
                     break;
                 }
             }
@@ -58,7 +59,7 @@ namespace TestApp
         /// <param name="array"></param>
         /// <param name="number"></param>
         /// <returns></returns>
-        public (int, int, int) AnotherSearchThree(int[] array, int number)
+        public (int, int, int) AnotherSearchThree(int[] array, int number, Action<string> output = null)
         {
             var (first, second, third) = (-1, -1, -1);
 
@@ -71,7 +72,7 @@ namespace TestApp
             // check the if given number is out of bounds
             if (!CheckGivenNumberBounds(array, number))
             {
-                Console.WriteLine($"The given number {number} is out of bounds.");
+                output?.Invoke($"The given number {number} is out of bounds.");
                 return (first, second, third);
             }
 
@@ -83,7 +84,9 @@ namespace TestApp
                     var index = FindIndex(array, i, j, remain);
                     if (index != -1)
                     {
-                        return Reorder((i, j, index));
+                        (first, second, third) = Reorder((i, j, index));
+                        output?.Invoke($"Found {(first, second, third) }");
+                        return (first, second, third);
                     }
                 }
 
@@ -93,7 +96,7 @@ namespace TestApp
 
         private int FindIndex(int[] array, int i, int j, int remain)
         {
-            var index = -1;
+            int index = -1;
             index = Array.IndexOf(array, remain);
             if (index == -1)
             {

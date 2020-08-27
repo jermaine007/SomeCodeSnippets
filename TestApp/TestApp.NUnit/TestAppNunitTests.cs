@@ -12,14 +12,14 @@ namespace TestApp.NUnit
         private static readonly (int, int, int) NO_RESULT = (-1, -1, -1);
 
         [Test]
-        public void TestFromJsonFile()
+        public void TestJsonFile()
         {
             foreach (var data in TestData.Data)
             {
                 var array = (int[])data.Array;
                 var number = (int)data.Number;
                 var (expectedFirst, expectedSecond, expectedThird) = ((int, int, int))(data.Result[0], data.Result[1], data.Result[2]);
-                var (actualFirst, actualSecond, actualThird) = Searcher.ThreeSearch(array, number);
+                var (actualFirst, actualSecond, actualThird) = Searcher.ThreeSearch(array, number, msg => TestContext.WriteLine(msg));
                 Assert.IsTrue((expectedFirst, expectedSecond, expectedThird) == (actualFirst, actualSecond, actualThird));
                 if ((actualFirst, actualSecond, actualThird) != NO_RESULT)
                 {
@@ -29,9 +29,9 @@ namespace TestApp.NUnit
         }
 
         [Test]
-        public void RandomTests()
+        public void TestRandomTestCases()
         {
-            int arrayNumber = Searcher.Random.Next(10000, 50000);
+            int arrayNumber = Searcher.Random.Next(100000, 1000000);
             while (arrayNumber > 0)
             {
                 DoRandomTest();
@@ -41,10 +41,12 @@ namespace TestApp.NUnit
 
         private void DoRandomTest()
         {
-            var length = Searcher.Random.Next(4, 1000);
+
+            var length = Searcher.Random.Next(4, 10000);
             var number = Searcher.Random.Next();
             var array = Searcher.GenerateRandomArray(length, int.MinValue / 3, int.MaxValue / 3);
-            var (actualFirst, actualSecond, actualThird) = Searcher.ThreeSearch(array, number);
+            var (actualFirst, actualSecond, actualThird) = Searcher.ThreeSearch(array, number, msg => TestContext.WriteLine(msg));
+            TestContext.WriteLine($"Run test array length: {length}, number: {number}");
 
             if ((actualFirst, actualSecond, actualThird) != NO_RESULT)
             {
@@ -53,7 +55,7 @@ namespace TestApp.NUnit
             else
             {
                 // search again
-                (actualFirst, actualSecond, actualThird) = Searcher.AnotherSearchThree(array, number);
+                (actualFirst, actualSecond, actualThird) = Searcher.AnotherSearchThree(array, number, msg => TestContext.WriteLine(msg));
                 Assert.AreEqual(NO_RESULT, (actualFirst, actualSecond, actualThird));
             }
 
