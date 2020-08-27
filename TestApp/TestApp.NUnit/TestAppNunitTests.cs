@@ -21,7 +21,7 @@ namespace TestApp.NUnit
                 var array = (int[])data.Array;
                 var number = (int)data.Number;
                 var (expectedFirst, expectedSecond, expectedThird) = ((int, int, int))(data.Result[0], data.Result[1], data.Result[2]);
-                var (actualFirst, actualSecond, actualThird) = Searcher.ThreeSearch(array, number, msg => TestContext.WriteLine(msg));
+                var (actualFirst, actualSecond, actualThird) = Searcher.ThreeSearch(array, number);
                 Assert.IsTrue((expectedFirst, expectedSecond, expectedThird) == (actualFirst, actualSecond, actualThird));
                 if ((actualFirst, actualSecond, actualThird) != NO_RESULT)
                 {
@@ -33,14 +33,14 @@ namespace TestApp.NUnit
         [Test]
         public void TestRandomTestCases()
         {
-            int arrayNumber = Searcher.Random.Next(10000, 100000);
-            TestContext.WriteLine($"Begin to test {arrayNumber} random test cases");
+            int arrayNumber = Searcher.Random.Next(10000, 50000);
+          
             while (arrayNumber > 0)
             {
                 DoRandomTest();
                 arrayNumber--;
             }
-            TestContext.WriteLine($"End to test {arrayNumber} random test cases");
+            
         }
 
         private void DoRandomTest()
