@@ -15,13 +15,6 @@ namespace TestApp.NUnit
         protected dynamic TestData { get; private set; }
 
         /// <summary>
-        /// Get the tested array by index
-        /// </summary>
-        /// <param name="index"></param>
-        /// <returns></returns>
-        protected int[] GetTestArray(int index) => TestData.TestArray[index];
-
-        /// <summary>
         /// Seracher instance
         /// </summary>
         protected Searcher Searcher { get; } = new Searcher();
@@ -29,7 +22,7 @@ namespace TestApp.NUnit
         /// <summary>
         /// Test File Path
         /// </summary>
-        public string TestDataFile { get; } = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "TestArrays.json");
+        public string TestDataFile { get; } = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "TestData.json");
 
         /// <summary>
         /// Setup test
@@ -39,9 +32,15 @@ namespace TestApp.NUnit
         {
             TestData = JsonConvert.DeserializeAnonymousType(File.ReadAllText(TestDataFile), new
             {
-                TestArray = new List<int[]> { new int[0] }
+                Data = new[] {
+                    new {
+                     Array = new int[0],
+                     Number = 0,
+                     Result = new int[0]
+                    }
+                }
 
-            });
+            }); ;
             OnSetup();
         }
 

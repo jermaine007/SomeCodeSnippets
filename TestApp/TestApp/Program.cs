@@ -18,8 +18,9 @@ namespace TestApp
 
             // assume given number is 100
             var number = 100;
-
-            var (first, second, third) = ThreeSearch(array, number);
+            var searcher = new Searcher();
+            var (first, second, third) = searcher.ThreeSearch(array, number);
+            var (first1, second1, third1) = searcher.AnotherSearchThree(array, number);
 
             if (first != -1 && second != -1 && third != -1)
             {

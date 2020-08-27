@@ -7,7 +7,9 @@ namespace TestApp
 {
     public class Searcher
     {
-        public Searcher() { }
+        public Random Random { get; private set; }
+
+        public Searcher() => this.Random = new Random();
 
         /// <summary>
         /// Search the suitable three indexes that meet array[i] + array[j] + array[k] = number.
@@ -51,29 +53,88 @@ namespace TestApp
         }
 
         /// <summary>
+        /// Another search method
+        /// </summary>
+        /// <param name="array"></param>
+        /// <param name="number"></param>
+        /// <returns></returns>
+        public (int, int, int) AnotherSearchThree(int[] array, int number)
+        {
+            var (first, second, third) = (-1, -1, -1);
+
+            // require more than 3 elements
+            if (array.Length < 3)
+            {
+                return (first, second, third);
+            }
+
+            // check the if given number is out of bounds
+            if (!CheckGivenNumberBounds(array, number))
+            {
+                Console.WriteLine($"The given number {number} is out of bounds.");
+                return (first, second, third);
+            }
+
+            for (int i = 0; i < array.Length - 1; i++)
+            {
+                for (int j = i + 1; j < array.Length; j++)
+                {
+                    var remain = number - (array[i] + array[j]);
+                    var index = FindIndex(array, i, j, remain);
+                    if (index != -1)
+                    {
+                        return Reorder((i, j, index));
+                    }
+                }
+
+            }
+            return (first, second, third);
+        }
+
+        private int FindIndex(int[] array, int i, int j, int remain)
+        {
+            var index = -1;
+            index = Array.IndexOf(array, remain);
+            if (index == -1)
+            {
+                return index;
+            }
+            if (index == i && i + 1 < array.Length)
+            {
+                index = Array.IndexOf(array, remain, i + 1);
+            }
+            if (index == -1)
+            {
+                return index;
+            }
+            if (index == j && j + 1 < array.Length)
+            {
+                index = Array.IndexOf(array, remain, j + 1);
+            }
+            return index;
+        }
+
+
+
+        /// <summary>
+        /// Generate a random array and print its elements
+        /// </summary>
+        /// <param name="random"></param>
+        /// <param name="length">array length</param>
+        /// <returns></returns>
+        public int[] GenerateRandomArray(int length, int minValue, int maxValue)
+            => Enumerable.Range(0, length).Select(i => Random.Next(minValue, maxValue)).ToArray();
+
+
+        /// <summary>
         /// Reorder the output indexes
         /// </summary>
         /// <param name="indexes">The indexes</param>
         /// <returns></returns>
         private (int, int, int) Reorder((int, int, int) indexes)
         {
-            // subFirst always < subSecond
-            // given index < subFirst -> given index, subFirst, subSecond
-            // given index > subSecond -> subFirst, subSecond, given index
-            // Otherwise subFirst -> given index -> subSecond
-            // Or use linq -> new List<int> { indexes.Item1, indexes.Item2, indexes.Item3 }.OrderBy(i => i).ToArray();
-            if (indexes.Item3 < indexes.Item1)
-            {
-                return (indexes.Item3, indexes.Item1, indexes.Item2);
-            }
-            else if (indexes.Item3 < indexes.Item2)
-            {
-                return (indexes.Item1, indexes.Item2, indexes.Item3);
-            }
-            else
-            {
-                return (indexes.Item1, indexes.Item3, indexes.Item2);
-            }
+            var ordered = new List<int> { indexes.Item1, indexes.Item2, indexes.Item3 }.OrderBy(i => i).ToArray();
+            return (ordered[0], ordered[1], ordered[2]);
         }
 
         /// <summary>
@@ -107,6 +168,11 @@ namespace TestApp
 
             for (int i = 0; i < array.Length; i++)
             {
+                if (index == i)
+                {
+                    continue;
+                }
+
                 var sub = number - array[i];
                 if (!map.ContainsKey(sub))
                 {
